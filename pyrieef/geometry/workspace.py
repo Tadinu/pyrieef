@@ -489,7 +489,7 @@ class Box(Shape):
         sign = np.where(Box.is_inside(self, x), -1., 1.)
         minimum = np.min(np.array(d), axis=0)
         d = sign * minimum
-        return np.asscalar(d) if d.size == 1 else d
+        return np.ndarray.item(d) if d.size == 1 else d
 
     def sampled_points(self):
         points = []
@@ -923,7 +923,7 @@ class Polygon(Shape):
         sign = np.where(self.is_inside(x), -1., 1.)
         minimum = np.min(np.array(d), axis=0)
         d = sign * minimum
-        return np.asscalar(d) if d.size == 1 else d
+        return np.ndarray.item(d) if d.size == 1 else d
 
     def sampled_points(self):
         nb_points_per_edge = max(2, int(self.nb_points / len(self._edges)))
@@ -984,7 +984,7 @@ class Complex(Shape):
         for i, shape in enumerate(self._shapes):
             d[i] = shape.dist_from_border(x)
         d = np.min(np.array(d), axis=0)
-        return np.asscalar(d) if d.size == 1 else d
+        return np.ndarray.item(d) if d.size == 1 else d
 
     def is_inside(self, x):
         inside = [None] * len(self._shapes)

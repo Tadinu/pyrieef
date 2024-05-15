@@ -28,11 +28,9 @@ from pyrieef.geometry.diffeomorphisms import *
 from pyrieef.geometry.utils import *
 import itertools
 
-ellipse = AnalyticEllipse()
+ellipse = AnalyticEllipse(.2, .1)
 ellipse.set_alpha(alpha_f, beta_inv_f)
 ellipse.origin = np.array([.1, .0])
-ellipse.a = .1
-ellipse.b = .2
 
 workspace = Workspace()
 workspace.obstacles.append(ellipse.object())

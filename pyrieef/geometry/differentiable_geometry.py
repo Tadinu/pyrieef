@@ -388,7 +388,7 @@ class QuadricFunction(DifferentiableMap):
 
     def forward(self, x):
         x_tmp = np.matrix(x.reshape(self._b.size, 1))
-        v = np.asscalar(
+        v = np.ndarray.item(
             .5 * x_tmp.T * self._a * x_tmp + self._b.T * x_tmp + self._c)
         return v
 

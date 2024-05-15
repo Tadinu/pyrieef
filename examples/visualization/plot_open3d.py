@@ -18,17 +18,19 @@
 #                                        Jim Mainprice on Wed April 21 2021
 
 import demos_common_imports
+import pyrieef
 from pyrieef.utils.timer import Rate
 
+import os
 import open3d as o3d
 import numpy as np
 import time
 
 # Download bunny at http://graphics.stanford.edu/data/3Dscanrep/"
-DATA_DIRECTORY = "/Users/jim/Dropbox/Work/workspace/pyrieef/data/"
+DATA_DIRECTORY = os.path.join(os.path.dirname(os.path.dirname(pyrieef.__file__)), "data")
 # BUNNY = DATA_DIRECTORY + "bunny/data/bun045.ply"
 # BUNNY = DATA_DIRECTORY + "bunny/reconstruction/bun_zipper_res2.ply"
-BUNNY = DATA_DIRECTORY + "bunny/reconstruction/bun_zipper.ply"
+BUNNY = os.path.join(DATA_DIRECTORY, "bunny/reconstruction/bun_zipper.ply")
 # BUNNY = DATA_DIRECTORY + "scan.stl"
 
 # ROBOTS = "/Users/jmainpri/Dropbox/Work/workspace/pybullet_robots/"

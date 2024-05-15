@@ -225,7 +225,7 @@ class TrajectoryOptimizationViewer:
             gradient, stores the configuration deltas
         """
         if self.viewer is None:
-            self.init_viewer()
+            self.init_viewer(self.objective.workspace)
         if self._use_3d:
             self.viewer.reset_spheres()
         else:

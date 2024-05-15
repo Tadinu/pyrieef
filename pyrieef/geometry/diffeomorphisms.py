@@ -315,8 +315,8 @@ class ElectricCircle(AnalyticPlaneDiffeomoprhism):
 
 class AnalyticEllipse(AnalyticPlaneDiffeomoprhism):
 
-    def __init__(self):
-        self.ellipse = Ellipse()
+    def __init__(self, a = 0., b = 0.):
+        self.ellipse = Ellipse(a, b)
         self.radius = .1
         self.eta = self.radius  # for the exp
         # self.eta = .01 # for the 1/x
