@@ -6,6 +6,6 @@ h5py
 tqdm
 pyyaml
 pytest
-pyglet
+pyglet~=1.5.27
 scikit-image
 # tensorflow==1.0
