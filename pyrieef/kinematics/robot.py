@@ -19,7 +19,7 @@
 
 from abc import abstractmethod
 from .homogeneous_transform import *
-from geometry.workspace import *
+from pyrieef.geometry.workspace import *
 import json
 import os
 import math

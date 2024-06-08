@@ -20,6 +20,8 @@
 
 # PyKDL can be installed using
 # conda install -c jf pykdl
+# OR
+#conda install python-orocos-kdl
 
 from PyKDL import *
 print("Creating Robotic Chain")

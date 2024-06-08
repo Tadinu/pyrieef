@@ -20,7 +20,7 @@
 import numpy as np
 from math import pi
 from math import cos, sin
-from geometry.differentiable_geometry import *
+from pyrieef.geometry.differentiable_geometry import *
 
 
 def radian(q):
@@ -37,7 +37,7 @@ class TwoLinkArm:
 
     def __init__(self, q0=[0, 0]):
         self.shoulder = np.array([0, 0])
-        self.link_lengths = [0, 1]
+        self.link_lengths = [1, 0.5]
         self.set_and_update(q0)
 
     def set_and_update(self, q):
@@ -45,24 +45,39 @@ class TwoLinkArm:
         self.forward_kinematics()
 
     def forward_kinematics(self):
+        # Base
         T1 = transform_2d(self.q[0], 0)
+        # Translate then rotate to Elbow joint
         T2a = transform_2d(0, self.link_lengths[0])
         T2b = transform_2d(self.q[1], 0)
+
+        # Translate then rotate to Wrist joint
         T3 = transform_2d(0, self.link_lengths[1])
-        T_e = T1 @ T2a @ T2b
-        T_w = T_e @ T3
-        self.elbow = T_e[:2, 2]
-        self.wrist = T_w[:2, 2]
+
+        # Elbow pose
+        T_elbow = T1 @ T2a @ T2b
+
+        # Wrist pose
+        T_wrist = T_elbow @ T3
+
+        self.elbow = T_elbow[:2, 2]
+        self.wrist = T_wrist[:2, 2]
 
     def plot(self):
+        # Upper arm
         plt.plot([self.shoulder[0], self.elbow[0]],
                  [self.shoulder[1], self.elbow[1]],
                  'r-')
+
+        # Forearm
         plt.plot([self.elbow[0], self.wrist[0]],
                  [self.elbow[1], self.wrist[1]],
                  'r-')
+        # Shoulder joint
         plt.plot(self.shoulder[0], self.shoulder[1], 'ko')
+        # Elbow joint
         plt.plot(self.elbow[0], self.elbow[1], 'ko')
+        # Wrist joint
         plt.plot(self.wrist[0], self.wrist[1], 'ko')
 
 
@@ -112,7 +127,7 @@ class TwoLinkArmAnalyticalForwardKinematics(DifferentiableMap):
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
-    arm = TwoLinkArm(radian([60, 0]))
+    arm = TwoLinkArm(radian([60, 30]))
     arm.forward_kinematics()
     print("wrist : ", arm.wrist)
     arm.plot()

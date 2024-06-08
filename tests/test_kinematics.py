@@ -167,4 +167,4 @@ if __name__ == "__main__":
     # test_homogeneous_jacobian()
     # test_freeflyer()
     test_isometries()
-    # test_planar_robot_jacobian()
+    test_planar_robot_jacobian()
