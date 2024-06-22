@@ -33,7 +33,6 @@ from pyrieef.motion.geodesic import GeodesicObjective2D
 from pyrieef.optimization import algorithms
 import itertools
 
-
 VERBOSE = True
 BOXES = False
 TRAJ_LENGTH = 60

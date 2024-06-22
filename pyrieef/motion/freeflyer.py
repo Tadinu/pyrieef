@@ -34,11 +34,11 @@ class FreeflyerObjective:
                  robot=None):
         self.robot = robot
         self.verbose = False
-        self.config_space_dim = n       # nb of dofs
-        self.q_init = q_init            # start configuration
-        self.q_goal = q_goal            # goal configuration
-        self.T = T                      # time steps
-        self.dt = 0.1                   # sample rate.
+        self.config_space_dim = n  # nb of dofs
+        self.q_init = q_init  # start configuration
+        self.q_goal = q_goal  # goal configuration
+        self.T = T  # time steps
+        self.dt = 0.1  # sample rate.
         self.trajectory_space_dim = (self.config_space_dim * (self.T + 2))
         self.embedding = embedding
         self._init_potential_scalar = 0.

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import numpy as np
 
 # Copyright (c) 2018, University of Stuttgart
 # All rights reserved.
@@ -23,7 +24,6 @@ from geometry.differentiable_geometry import *
 
 
 class FiniteDifferencesVelocity(AffineMap):
-
     """ Define velocities where clique = [ x_t ; x_{t+1} ] """
 
     def __init__(self, dim, dt):
@@ -40,7 +40,6 @@ class FiniteDifferencesVelocity(AffineMap):
 
 
 class FiniteDifferencesAcceleration(AffineMap):
-
     """ Define accelerations where clique = [ x_{t-1} ; x_{t} ; x_{t+1} ] """
 
     def __init__(self, dim, dt):
@@ -58,7 +57,6 @@ class FiniteDifferencesAcceleration(AffineMap):
 
 
 class SquaredNormDerivative(DifferentiableMap):
-
     """ Define any norm of derivatives clique = [x_t ; x_{t+1} ; ... ] """
 
     def __init__(self, dim):
@@ -82,7 +80,6 @@ class SquaredNormDerivative(DifferentiableMap):
 
 
 class SquaredNormVelocity(SquaredNormDerivative):
-
     """ Defines SN of velocities where clique = [x_t ; x_{t+1} ] """
 
     def __init__(self, dim, dt):
@@ -91,7 +88,6 @@ class SquaredNormVelocity(SquaredNormDerivative):
 
 
 class SquaredNormAcceleration(SquaredNormDerivative):
-
     """ Defines SN of acceleration clique = [x_{t-1} ; x_{t} ; x_{t+1} ] """
 
     def __init__(self, dim, dt):
@@ -100,7 +96,6 @@ class SquaredNormAcceleration(SquaredNormDerivative):
 
 
 class LogBarrierFunction(DifferentiableMap):
-
     """
     Log barrier function
 
@@ -133,7 +128,7 @@ class LogBarrierFunction(DifferentiableMap):
         """ TODO add this notion of infity """
         # np.Infity throws warnning in current version of linesearch
         # infinity = 1e+200, otherwise does not work
-        infinity = np.Infinity
+        infinity = np.inf
         d = x < self._margin
         if x.shape == ():
             return infinity if d else -self.mu * np.log(x)
@@ -156,7 +151,6 @@ class LogBarrierFunction(DifferentiableMap):
 
 
 class BoundBarrier(DifferentiableMap):
-
     """ Barrier between values v_lower and v_upper """
 
     def __init__(self, v_lower, v_upper, margin=1e-10, alpha=1.):
@@ -229,7 +223,6 @@ class BoundBarrier(DifferentiableMap):
 
 
 class SimplePotential2D(DifferentiableMap):
-
     """ obstacle potential class """
 
     def __init__(self, signed_distance_field):
@@ -263,11 +256,10 @@ class SimplePotential2D(DifferentiableMap):
         J_sdf, rho = self._sdf_jacobian(x)
         H_sdf = self._sdf.hessian(x)
         J_sdf_sq = J_sdf.T * J_sdf
-        return rho * (self._alpha**2 * J_sdf_sq - self._alpha * H_sdf)
+        return rho * (self._alpha ** 2 * J_sdf_sq - self._alpha * H_sdf)
 
 
 class CostGridPotential2D(SimplePotential2D):
-
     """ obstacle potential class with margin and offset"""
 
     def __init__(self, signed_distance_field, alpha, margin, offset):
@@ -282,7 +274,6 @@ class CostGridPotential2D(SimplePotential2D):
 
 
 class ObstaclePotential2D(DifferentiableMap):
-
     """ obstacle potential class """
 
     def __init__(self, signed_distance_field, scaling=50., alpha=1.e-3):

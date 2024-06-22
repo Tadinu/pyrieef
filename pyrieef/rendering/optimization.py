@@ -97,9 +97,13 @@ class TrajectoryOptimizationViewer:
         self.viewer.set_workspace(self.objective.workspace)
 
         if self.objective.obstacle_potential:
-            self.viewer.draw_ws_background(
-                self.objective.obstacle_potential,
-                color_style=self.background_color_style)
+            from . import workspace_planar as renderer
+            if isinstance(self._use_gl, renderer.WorkspaceOpenGl):
+                self.viewer.draw_ws_background(
+                    self.objective.obstacle_potential,
+                    color_style=self.background_color_style)
+            else:
+                self.viewer.draw_ws_background(self.objective.obstacle_potential)
         else:
             self.viewer.draw_ws_img(np.ones((100, 100)),
                                     color_style=self.background_color_style)

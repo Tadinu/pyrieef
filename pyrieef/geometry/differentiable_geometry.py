@@ -415,7 +415,7 @@ class ExpTestFunction(DifferentiableMap):
         return 2
 
     def forward(self, p):
-        return np.exp(-(2 * p[0])**2 - (p[1] / 2)**2)
+        return np.exp(-(2 * p[0]) ** 2 - (p[1] / 2) ** 2)
 
 
 class PolynomeTestFunction(DifferentiableMap):
@@ -428,16 +428,16 @@ class PolynomeTestFunction(DifferentiableMap):
         return 2
 
     def forward(self, p):
-        return (p[0] - 1)**2 + .5 * (p[1] - 3)**2 + 4
+        return (p[0] - 1) ** 2 + .5 * (p[1] - 3) ** 2 + 4
 
     def jacobian_x(self, p):
-        return 2*(p[0]-1)
+        return 2 * (p[0] - 1)
 
     def jacobian_y(self, p):
-        return p[1]-3
+        return p[1] - 3
 
     def jacobian(self, p):
-        return np.matrix([2*(p[0]-1), p[1]-3])
+        return np.matrix([2 * (p[0] - 1), p[1] - 3])
 
 
 class LinearTestFunction(DifferentiableMap):
@@ -562,7 +562,7 @@ class Norm(DifferentiableMap):
     def hessian(self, x):
         x_d = self._xd(x)
         d_inv = 1. / np.linalg.norm(x_d)
-        return d_inv * np.eye(x.size) - d_inv**3 * np.outer(x_d, x_d)
+        return d_inv * np.eye(x.size) - d_inv ** 3 * np.outer(x_d, x_d)
 
 
 class SoftNorm(DifferentiableMap):
@@ -614,7 +614,7 @@ class Normalize(DifferentiableMap):
 
     def jacobian(self, x):
         dinv = 1. / np.linalg.norm(x)
-        s = np.full((self._n, ), dinv)
+        s = np.full((self._n,), dinv)
         return np.diag(s) - np.outer(x, x) * (dinv ** 3)
 
 
@@ -692,7 +692,7 @@ class Sigmoid(DifferentiableMap):
             if x[i] > 0:
                 y[i] = 1. / (1. + np.exp(-x[i]))
             else:
-                expx = np.exp(x)
+                expx = np.exp(x)[0]
                 y[i] = expx / (1. + expx)
         return y
 

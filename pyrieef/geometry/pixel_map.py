@@ -129,8 +129,8 @@ class RegressedPixelGridSpline(DifferentiableMap):
     def jacobian(self, p):
         assert p.size == 2
         J = np.matrix([[0., 0.]])
-        J[0, 0] = self._interp_spline(p[0], p[1], dx=1)
-        J[0, 1] = self._interp_spline(p[0], p[1], dy=1)
+        J[0, 0] = self._interp_spline(p[0], p[1], dx=1)[0][0]
+        J[0, 1] = self._interp_spline(p[0], p[1], dy=1)[0][0]
         return J
 
 

@@ -25,7 +25,7 @@ from pyrieef.geometry.workspace import EnvBox
 from pyrieef.motion.trajectory import linear_interpolation_trajectory
 from pyrieef.motion.trajectory import no_motion_trajectory
 from pyrieef.motion.objective import MotionOptimization2DCostMap
-from pyrieef.optimization import algorithms
+from pyrieef.optimization.algorithms import OptimizerType
 from pyrieef.rendering.optimization import TrajectoryOptimizationViewer
 
 # ----------------------------------------------------------------------------
@@ -46,32 +46,29 @@ objective_traj = MotionOptimization2DCostMap(
         dim=np.array([1., 1.])),
     T=trajectory.T(),
     q_init=trajectory.initial_configuration(),
-    q_goal=trajectory.final_configuration())
+    q_goal=trajectory.final_configuration(),
+    optimizer_type=OptimizerType.NATURAL_GRADIENT,
+)
 objective_traj.set_scalars(
     obstacle_scalar=1.,
     init_potential_scalar=0.,
     term_potential_scalar=10000000.,
     acceleration_scalar=2.)
-objective_traj.create_clique_network()
-objective_traj.add_final_velocity_terms()
-objective_traj.add_smoothness_terms(2)
-objective_traj.add_obstacle_terms()
-objective_traj.add_box_limits()
-objective_traj.add_init_and_terminal_terms()
-objective_traj.create_objective()
+objective_traj.init()
 
-objective = TrajectoryOptimizationViewer(
+objective_viewer = TrajectoryOptimizationViewer(
     objective_traj, draw=True, draw_gradient=True)
-objective.reset_objective()
-objective.viewer.draw_ws_obstacles()
+objective_viewer.reset_objective()
+objective_viewer.viewer.draw_ws_obstacles()
 
 # ----------------------------------------------------------------------------
 # Runs a Newton optimization algorithm on the objective
 # ----------------------------------------------------------------------------
 t_0 = time.time()
-algorithms.newton_optimize_trajectory(
-    objective, trajectory, verbose=True, maxiter=100)
+nb_steps = 100 if objective_traj.optimizer_type == OptimizerType.NEWTON else 300
+objective_traj.set_eta(0.1)
+objective_traj.optimize(objective_traj.q_init, nb_steps=nb_steps, trajectory=trajectory)
 
 print("Done. ({} sec.)".format(time.time() - t_0))
 while True:
-    objective.draw(trajectory)
+    objective_viewer.draw(trajectory)

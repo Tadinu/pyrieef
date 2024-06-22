@@ -64,7 +64,7 @@ import pyglet
 from pyglet.gl import *
 from pyglet.window import key
 
-from .shader import Shader
+from shader import Shader
 
 try:
     # Try and create a window with multisampling (antialiasing)
@@ -79,7 +79,7 @@ label = pyglet.text.HTMLLabel(html, # location=location,
                               width=window.width//2,
                               multiline=True, anchor_x='center', anchor_y='center')
 
-fps_display = pyglet.clock.ClockDisplay() # see programming guide pg 48
+fps_display = pyglet.clock.Clock() # see programming guide pg 48
 
 @window.event
 def on_resize(width, height):
@@ -157,7 +157,7 @@ def on_draw():
 
     glLoadIdentity()
     glTranslatef(250, -290, -500)
-    fps_display.draw()
+    #fps_display.draw()
 
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_LIGHTING)

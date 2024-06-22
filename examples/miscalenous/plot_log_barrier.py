@@ -21,10 +21,9 @@ import demos_common_imports
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 x = np.linspace(0.01, 10., 100)
 fig = plt.figure()
-print np.log(x)
+print(np.log(x))
 plt.plot(x, -1 * np.log(x), label="1")
 plt.plot(x, -2 * np.log(x), label="2")
 plt.plot(x, -3 * np.log(x), label="3")

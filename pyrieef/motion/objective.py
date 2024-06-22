@@ -21,6 +21,7 @@ from .__init__ import *
 from motion.trajectory import *
 from motion.cost_terms import *
 from optimization.optimization import *
+from optimization.algorithms import OptimizerType
 from geometry.differentiable_geometry import *
 from geometry.workspace import *
 from scipy import optimize
@@ -33,11 +34,12 @@ class MotionOptimization2DCostMap:
                  signed_distance_field=None,
                  costmap=None,
                  q_init=None,
-                 q_goal=None):
+                 q_goal=None,
+                 optimizer_type: OptimizerType = OptimizerType.NATURAL_GRADIENT):
         self.verbose = False
-        self.config_space_dim = n       # nb of dofs
-        self.T = T                      # time steps
-        self.dt = 0.1                   # sample rate
+        self.config_space_dim = n  # nb of dofs
+        self.T = T  # time steps
+        self.dt = 0.1  # sample rate
         self.trajectory_space_dim = (self.config_space_dim * (self.T + 2))
         self.workspace = None
         self.signed_distance_field = signed_distance_field
@@ -67,14 +69,15 @@ class MotionOptimization2DCostMap:
         self.create_smoothness_metric()
         self.obstacle_potential_from_sdf()
 
+        # Optimizer
+        self.optimizer_type = optimizer_type
+
+    def init(self):
         # Here we combine everything to make an objective
-        # TODO see why n==1 doesn't work...
-        # TODO see why n>2 doesn't work...
-        if self.config_space_dim == 2:
-            # Creates a differentiable clique function.
-            self.create_clique_network()
-            self.add_all_terms()
-            self.create_objective()
+        # Creates a differentiable clique function.
+        self.create_clique_network()
+        self.add_all_terms()
+        self.create_objective()
 
     def set_problem(self, workspace, trajectory, obstacle_potential):
         self.workspace = workspace
@@ -171,7 +174,6 @@ class MotionOptimization2DCostMap:
                 t, Scale(potential, alphas[t] * self._term_potential_scalar))
 
     def add_init_and_terminal_terms(self):
-
         if self._init_potential_scalar > 0.:
             initial_potential = Pullback(
                 SquaredNorm(self.q_init),
@@ -186,7 +188,6 @@ class MotionOptimization2DCostMap:
             Scale(terminal_potential, self._term_potential_scalar))
 
     def add_waypoint_terms(self, q_waypoint, i, scalar):
-
         initial_potential = Pullback(
             SquaredNorm(q_waypoint),
             self.function_network.left_most_of_clique_map())
@@ -194,7 +195,6 @@ class MotionOptimization2DCostMap:
             i, Scale(initial_potential, scalar))
 
     def add_final_velocity_terms(self):
-
         derivative = Pullback(SquaredNormVelocity(
             self.config_space_dim, self.dt),
             self.function_network.left_of_clique_map())
@@ -203,7 +203,6 @@ class MotionOptimization2DCostMap:
             Scale(derivative, self._term_velocity_scalar))
 
     def add_smoothness_terms(self, deriv_order=2):
-
         if deriv_order == 1:
             derivative = Pullback(SquaredNormVelocity(
                 self.config_space_dim, self.dt),
@@ -292,13 +291,13 @@ class MotionOptimization2DCostMap:
         self.add_obstacle_terms()
         self.add_box_limits()
         self.add_init_and_terminal_terms()
-        self.add_obstacle_barrier()
+        if self.optimizer_type == OptimizerType.NATURAL_GRADIENT:
+            self.add_obstacle_barrier()
 
     def optimize(self,
                  q_init,
                  nb_steps=100,
-                 trajectory=None,
-                 optimizer="natural_gradient"):
+                 trajectory=None):
 
         if trajectory is None:
             trajectory = linear_interpolation_trajectory(
@@ -306,7 +305,7 @@ class MotionOptimization2DCostMap:
 
         xi = trajectory.active_segment()
 
-        if optimizer is "natural_gradient":
+        if self.optimizer_type == OptimizerType.NATURAL_GRADIENT:
             optimizer = NaturalGradientDescent(self.objective, self.metric)
             optimizer.set_eta(self._eta)
 
@@ -324,13 +323,14 @@ class MotionOptimization2DCostMap:
                 gradient = optimizer.gradient(xi)
                 delta = optimizer.delta(xi)
 
-        elif optimizer is "newton":
+        elif self.optimizer_type == OptimizerType.NEWTON:
             res = optimize.minimize(
                 x0=np.array(xi),
                 method='Newton-CG',
                 fun=self.objective.forward,
                 jac=self.objective.gradient,
                 hess=self.objective.hessian,
+                tol=1e-9,
                 options={'maxiter': nb_steps, 'disp': self.verbose}
             )
             trajectory.active_segment()[:] = res.x

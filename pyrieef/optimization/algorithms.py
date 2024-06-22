@@ -17,9 +17,15 @@
 #
 #                                        Jim Mainprice on Sunday June 13 2018
 
+import enum
 from scipy import optimize
 import numpy as np
 import time
+
+
+class OptimizerType(enum.IntEnum):
+    NATURAL_GRADIENT = enum.auto()
+    NEWTON = enum.auto()
 
 
 def newton_optimize_trajectory(

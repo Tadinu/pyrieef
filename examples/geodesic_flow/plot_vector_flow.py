@@ -25,7 +25,6 @@ from pyrieef.rendering.workspace_planar import WorkspaceDrawer
 import matplotlib.pyplot as plt
 import itertools
 
-
 ROWS = 1
 COLS = 1
 
@@ -62,7 +61,7 @@ phi = np.empty(X.shape)
 f = RegressedPixelGridSpline(u_t[-1], grid.resolution, grid.extent)
 for i, j in itertools.product(range(X.shape[0]), range(X.shape[1])):
     p = np.array([X[i, j], Y[i, j]])
-    phi[i, j] = f(p)
+    phi[i, j] = f(p)[0][0]
     g = f.gradient(p)
     g /= max(np.linalg.norm(g), 1e-30)
     U[i, j] = g[0]

@@ -25,6 +25,7 @@ from pyrieef.utils.misc import *
 # External
 import itertools
 from functools import reduce
+
 # import scipy
 
 NB_POINTS = 20
@@ -39,7 +40,7 @@ VECTORIZED = True
 
 
 def kernel(t, d, dim=2):
-    return np.exp(-(d**2) / (4 * t)) / pow(4 * np.pi * t, .5 * dim)
+    return np.exp(-(d ** 2) / (4 * t)) / pow(4 * np.pi * t, .5 * dim)
 
 
 def compare_with_kernel(u_t, t, workspace):
@@ -56,7 +57,7 @@ def compare_with_kernel(u_t, t, workspace):
     print(" -- shape u_t : ", u_t.shape)
     print(" -- shape u_e : ", u_e.shape)
     print(" -- error : ", error)
-    assert error < 0.01   # Error is smaller that 1%
+    assert error < 0.01  # Error is smaller that 1%
     return u_e
 
 
@@ -84,15 +85,15 @@ def forward_euler_2d(dt, h, source_grid, iterations, occupancy):
         # central-difference in space
         if VECTORIZED:
             u_t[1:-1, 1:-1] = u_0[1:-1, 1:-1] + dt * d * (
-                (u_0[2:, 1:-1] - 2 * u_0[1:-1, 1:-1] + u_0[:-2, 1:-1]) +
-                (u_0[1:-1, 2:] - 2 * u_0[1:-1, 1:-1] + u_0[1:-1, :-2]))
+                    (u_0[2:, 1:-1] - 2 * u_0[1:-1, 1:-1] + u_0[:-2, 1:-1]) +
+                    (u_0[1:-1, 2:] - 2 * u_0[1:-1, 1:-1] + u_0[1:-1, :-2]))
         else:
             for i, j in itertools.product(
                     range(1, NB_POINTS - 1), range(1, NB_POINTS - 1)):
                 u_t[i, j] = u_0[i, j] + dt * d * (
-                    - 4 * u_0[i, j] +
-                    (u_0[i + 1, j] + u_0[i - 1, j]) +
-                    (u_0[i, j + 1] + u_0[i, j - 1]))
+                        - 4 * u_0[i, j] +
+                        (u_0[i + 1, j] + u_0[i - 1, j]) +
+                        (u_0[i, j + 1] + u_0[i, j - 1]))
 
         u_t = np.where(occupancy.T > 0, Zero, u_t)
         u_0 = u_t.copy()
@@ -153,7 +154,7 @@ def crank_nicholson_2d(dt, h, source_grid, iterations, occupancy):
     dim = n ** 2
     M = np.zeros((dim, dim))
 
-    Zero = np.zeros((dim, ))
+    Zero = np.zeros((dim,))
     u_t = Zero.copy()
     u_0 = Zero.copy()
     u_t[source_grid[0] * n + source_grid[1]] = 1.e4
@@ -184,7 +185,7 @@ def crank_nicholson_2d(dt, h, source_grid, iterations, occupancy):
         apply_boundry_conditions_to_vector(u_t, n, occupancy)
 
         print(u_t.max())
-        if (i+1) % 3 == 0:
+        if (i + 1) % 3 == 0:
             costs.append(np.reshape(u_t, (n, n)))
 
     print("solved!")
@@ -256,7 +257,6 @@ def discrete_2d_gradient(M, N, dx=1., axis=0):
         A[last_block, range(M * (N - 2), M * (N - 1))] = -1
 
     if axis == 1:
-
         A = np.zeros((dim, dim))
         np.fill_diagonal(A, -1)
 
@@ -267,7 +267,7 @@ def discrete_2d_gradient(M, N, dx=1., axis=0):
         A[range(M - 1, dim, M), range(M - 1, dim, M)] = 1
         A[range(M - 1, dim, M), range(M - 2, dim, M)] = -1
 
-    return (1/dx) * A
+    return (1 / dx) * A
 
 
 def finite_difference_laplacian_2d(h, u):
@@ -279,7 +279,7 @@ def finite_difference_laplacian_2d(h, u):
 
     TODO
     """
-    d = 1/(h ** 2)
+    d = 1 / (h ** 2)
     v = u.copy()
     for i, j in itertools.product(
             range(1, u.shape[0] - 1), range(1, u.shape[1] - 1)):
@@ -389,7 +389,7 @@ def poisson_equation(D, dh):
     # gradient = -1. * np.array(gradient)
     M = D.shape[0]
     N = D.shape[1]
-    A = (1. / (dh**2)) * discrete_2d_laplacian(M, N, True)
+    A = (1. / (dh ** 2)) * discrete_2d_laplacian(M, N, True)
     D = D.flatten()
     A_inv = np.linalg.inv(A)
     phi = np.dot(A_inv, D)
