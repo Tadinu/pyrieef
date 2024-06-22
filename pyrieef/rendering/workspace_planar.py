@@ -439,7 +439,7 @@ class WorkspaceOpenGl(WorkspaceRender):
             origin - np.array([self._extent.x_min, self._extent.y_min])))
         circ = make_circle(self._scale * radius, 30, filled)
         circ.add_attr(t)
-        circ.set_color(*color)
+        circ.set_color(color)
         self.gl.add_onetime(circ)
 
     def draw_ws_point(self, point, color='b', shape='x'):
@@ -540,13 +540,13 @@ class WorkspaceOpenGl(WorkspaceRender):
                 circ = make_circle(self._scale * o.radius, 30, False)
                 center = self._scale * (o.origin - ws_o)
                 circ.add_attr(Transform(translation=center))
-                circ.set_color(*COLORS[i % 3])
+                circ.set_color(COLORS[i % 3])
                 self.gl.add_geom(circ)
 
             if hasattr(o, '_is_box'):
                 vertices = [self._scale * (v - ws_o) for v in o.verticies()]
                 box = PolyLine(vertices, True)
-                box.set_color(*COLORS[i % 3])
+                box.set_color(COLORS[i % 3])
                 self.gl.add_geom(box)
 
             if hasattr(o, '_is_oriented_box'):

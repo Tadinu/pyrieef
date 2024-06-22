@@ -87,7 +87,7 @@ def trajectory_optimization():
     optimizer.set_eta(.1)
     optimizer.set_scalars(
         term_potential_scalar=10000.,
-        smoothness_scalar=400.
+        init_potential_scalar=400.
     )
     optimizer.create_clique_network()
     optimizer.add_all_terms()
@@ -106,7 +106,6 @@ def trajectory_optimization():
         plot_results(workspace, x_init, x_goal, trajectory, optimizer)
     else:
         from pyrieef.rendering import workspace_planar
-        from pyrieef.rendering import opengl
         viewer = workspace_planar.WorkspaceOpenGl(workspace)
         viewer.draw_ws_background(optimizer.obstacle_potential_from_sdf())
         # viewer.draw_ws_obstacles()
@@ -120,7 +119,7 @@ def trajectory_optimization():
                 for k in range(optimizer.T + 1):
                     q = trajectory.configuration(k)
                     viewer.draw_ws_circle(.01, q)
-                    viewer.draw_ws_line(q, g_traj.configuration(k))
+                    viewer.draw_ws_line((q, g_traj.configuration(k)))
                 viewer.show()
                 time.sleep(0.02)
         input("Press Enter to continue...")
