@@ -33,13 +33,14 @@ from pyrieef.utils.collision_checking import *
 from pyrieef.geometry.diffeomorphisms import *
 
 # DRAW_MODE = None
-DRAW_MODE = "pyglet2d"  # None, pyglet2d, pyglet3d or matplotlib
+DRAW_MODE = "pyglet3d"  # None, pyglet2d, pyglet3d or matplotlib
 VERBOSE = True
 BOXES = False
 TRAJ_LENGTH = 100
 ALPHA = 10.
 MARGIN = .20
 OFFSET = 0.1
+DIM = 2
 
 
 def initialize_objective(workspace, objective):
@@ -74,14 +75,14 @@ def optimize_path(objective, trajectory, workspace):
 
 
 trajectory = linear_interpolation_trajectory(
-    q_init=-.22 * np.ones(2),
-    q_goal=.3 * np.ones(2),
+    q_init=-.22 * np.ones(DIM),
+    q_goal=.3 * np.ones(DIM),
     T=TRAJ_LENGTH
 )
 
 motion_objective = GeodesicObjective2D(
     T=trajectory.T(),
-    n=2,
+    n=DIM,
     q_init=trajectory.initial_configuration(),
     q_goal=trajectory.final_configuration(),
     embedding=None)
@@ -96,7 +97,7 @@ objective = TrajectoryOptimizationViewer(
 
 np.random.seed(0)
 sampling = sample_box_workspaces if BOXES else sample_circle_workspaces
-for k, workspace in enumerate(tqdm([sampling(1) for i in range(1)])):
+for k, workspace in enumerate(tqdm([sampling(2) for i in range(10)])):
     trajectory = linear_interpolation_trajectory(
         motion_objective.q_init,
         motion_objective.q_goal,
