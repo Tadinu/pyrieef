@@ -20,7 +20,7 @@
 import numpy as np
 from math import pi
 from math import cos, sin
-from pyrieef.geometry.differentiable_geometry import *
+from geometry.diffeo import *
 
 
 def radian(q):
@@ -95,7 +95,7 @@ def planar_arm_fk_pos(
         l1 * sin(q[0]) + l2 * sin(q[0] + q[1])])
 
 
-class TwoLinkArmAnalyticalForwardKinematics(DifferentiableMap):
+class TwoLinkArmAnalyticalForwardKinematics(Diffeo):
 
     def __init__(self, link_lengths=[0, 1]):
         """

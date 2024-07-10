@@ -44,9 +44,8 @@ class Shader:
         # and upload them
         # this is deep, dark, dangerous black magick - don't try stuff like
         # this at home!
-        src = (c_char_p * count)(*strings)
-        glShaderSource(shader, count, cast(
-            pointer(src), POINTER(POINTER(c_char))), None)
+        src = (c_char_p * count)(strings[0].encode('utf-8'))
+        glShaderSource(shader, count, cast(pointer(src), POINTER(POINTER(c_char))), None)
 
         # compile the shader
         glCompileShader(shader)
